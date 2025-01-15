@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/screens/home/home_scr.dart';
 
 import '../../Widget/snack.dart';
 
 
 class FiltersScreen extends StatefulWidget {
-  final Function(Map<String, bool>) saveFilters;
-  final Map<String, bool> currentFilters;
-
+  final Map<String,bool> filters;
   const FiltersScreen({
-    super.key,
-    required this.saveFilters,
-    required this.currentFilters,
+    super.key, required this.filters,
   });
 
   @override
@@ -18,21 +15,22 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  late bool isGlutenFree;
-  late bool isLactoseFree;
-  late bool isVegetarian;
-  late bool isVegan;
+ static bool isGlutenFree = false;
+ static bool isLactoseFree = false;
+ static bool isVegetarian = false;
+ static bool isVegan = false;
 
-  @override
-  void initState() {
-    super.initState();
-    isGlutenFree = widget.currentFilters['gluten']!;
-    isLactoseFree = widget.currentFilters['lactose']!;
-    isVegetarian = widget.currentFilters['vegetarian']!;
-    isVegan = widget.currentFilters['vegan']!;
-  }
 
-  Widget _buildSwitchTile(String title, String subtitle, bool value, Function(bool) onChanged) {
+ // Future<void> saveFilterState() async {
+ //   SharedPreferences sp = await SharedPreferences.getInstance();
+ //   sp.setBool('glutenfree', isGlutenFree);
+ //   sp.setBool('lactosefree', isLactoseFree);
+ //   sp.setBool('vegetarian', isVegetarian);
+ //   sp.setBool('vegan', isVegan);
+ // }
+
+  Widget _buildSwitchTile(
+      String title, String subtitle, bool value, Function(bool) onChanged) {
     return SwitchListTile(
       title: Text(title),
       subtitle: Text(subtitle),
@@ -49,43 +47,40 @@ class _FiltersScreenState extends State<FiltersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              final selectedFilters = {
-                'gluten': isGlutenFree,
-                'lactose': isLactoseFree,
-                'vegetarian': isVegetarian,
-                'vegan': isVegan,
-              };
-              widget.saveFilters(selectedFilters);
-              if(isGlutenFree==false&&isLactoseFree==false&&isVegetarian==false&&isVegan==false){
-                ScaffoldMessenger.of(context).showSnackBar(
-                    customSnackBar(
-                        message: 'Filters Removed',
-                        backgroundColor: Colors.black,
-                        duration: const Duration(seconds: 2),
-                        actionLabel: 'View',onActionPressed: (){
-                      Navigator.of(context).pop();
-                    }
-                    )
-                );
-              }else {
-                ScaffoldMessenger.of(context).showSnackBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            if(isGlutenFree==false&&isLactoseFree==false&&isVegetarian==false&&isVegan==false) {
+              ScaffoldMessenger.of(context).showSnackBar(
                   customSnackBar(
-                    message: 'Filters Applied',
+                    message: 'Filters removed',
                     backgroundColor: Colors.black,
-                    duration: const Duration(seconds: 2),
-                    actionLabel: 'View',onActionPressed: (){
-                    Navigator.of(context).pop();
-                  }
+                    duration: const Duration(milliseconds: 1500),
                   )
               );
-              }
-            },
-          ),
-        ],
+            }else{
+              ScaffoldMessenger.of(context).showSnackBar(
+                  customSnackBar(
+                    message: 'Filters applied',
+                    backgroundColor: Colors.black,
+                    duration: const Duration(milliseconds: 1500),
+                  )
+              );
+            }
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeSC(
+                  filtersMap: {
+                    'glutenfree': isGlutenFree,
+                    'lactosfree': isLactoseFree,
+                    'vegetarian': isVegetarian,
+                    'vegan': isVegan,
+                  },
+                  )),
+            );
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -93,40 +88,44 @@ class _FiltersScreenState extends State<FiltersScreen> {
             'Gluten-free',
             'Only include gluten-free meals.',
             isGlutenFree,
-                (newValue) {
+            (newValue) {
               setState(() {
                 isGlutenFree = newValue;
               });
+              // saveFilterState();
             },
           ),
           _buildSwitchTile(
             'Lactose-free',
             'Only include lactose-free meals.',
             isLactoseFree,
-                (newValue) {
+            (newValue) {
               setState(() {
                 isLactoseFree = newValue;
               });
+              // saveFilterState();
             },
           ),
           _buildSwitchTile(
             'Vegetarian',
             'Only include vegetarian meals.',
             isVegetarian,
-                (newValue) {
+            (newValue) {
               setState(() {
                 isVegetarian = newValue;
               });
+              // saveFilterState();
             },
           ),
           _buildSwitchTile(
             'Vegan',
             'Only include vegan meals.',
             isVegan,
-                (newValue) {
+            (newValue) {
               setState(() {
                 isVegan = newValue;
               });
+              // saveFilterState();
             },
           ),
         ],

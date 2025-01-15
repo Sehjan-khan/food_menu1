@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/screens/home/home_scr.dart';
 import '../../modal/meals.dart';
 import 'meal_details.dart';
 
@@ -10,7 +11,15 @@ class FavoritesScreen extends StatefulWidget {
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
+
 class _FavoritesScreenState extends State<FavoritesScreen> {
+  @override
+  void initState() {
+    setState(() {
+      favorites;
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +42,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => MealDetailScreen(meal: meal, favorites: widget.favorites),
+                  builder: (context) => MealDetailScreen(meal: meal, favorites: widget.favorites, onUpdateFavorites: () { setState(() {
+                  }); },),
                 ),
               );
             },

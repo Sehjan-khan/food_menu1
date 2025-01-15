@@ -6,8 +6,9 @@ import '../../modal/meals.dart';
 class MealDetailScreen extends StatefulWidget {
   final Meal meal;
   final List<Meal> favorites;
+  final VoidCallback onUpdateFavorites;
   const MealDetailScreen(
-      {super.key, required this.meal, required this.favorites});
+      {super.key, required this.meal, required this.favorites, required this.onUpdateFavorites});
 
   @override
   State<MealDetailScreen> createState() => _MealDetailScreenState();
@@ -26,6 +27,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var selectedMeal = meals.firstWhere((meal) => meal.id == widget.meal.id);
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Color(0xFFFFF3E0)),
@@ -42,42 +44,32 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                 setState(() {
                   isFavorite = !isFavorite;
                   if (isFavorite) {
-                    if (!favorites.contains(widget.meal)) {
-                      favorites.add(widget.meal);
+                    if (!favorites.contains(selectedMeal)) {
+                      favorites.add(selectedMeal);
                       ScaffoldMessenger.of(context).showSnackBar(
                           customSnackBar(
                             message: 'Added To Favorites',
                             backgroundColor: Colors.black,
                             duration: const Duration(milliseconds: 1500),
-                            actionLabel: 'Undo',
-                            onActionPressed: () {
-                              setState(() {
-                                favorites.remove(widget.meal);
-                              });
-                            },
                           )
                       );
 
                     }
                   } else {
-                    if (favorites.contains(widget.meal)) {
-                      setState(() {
-                        favorites.remove(widget.meal);
-                        customSnackBar(
-                              message: 'Removed From Favorites',
-                              backgroundColor: Colors.black,
-                              duration: const Duration(milliseconds: 1500),
-                              actionLabel: 'Undo',
-                              onActionPressed: () {
-                                setState(() {
-                                  favorites.add(widget.meal);
-                                });
+                    if (favorites.contains(selectedMeal)) {
 
-                              }
-                            );
-                      });
+                        favorites.remove(selectedMeal);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            customSnackBar(
+                                message: 'Removed From Favorites',
+                                backgroundColor: Colors.black,
+                                duration: const Duration(milliseconds: 1500),
+                            )
+                        );
+
                     }
                   }
+                  widget.onUpdateFavorites();
                 });
               },
               icon: isFavorite

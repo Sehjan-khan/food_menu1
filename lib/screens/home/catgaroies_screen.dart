@@ -5,9 +5,9 @@ import 'meal_scr.dart';
 
 
 class CategoriesScreen extends StatefulWidget {
-      const CategoriesScreen({super.key, required this.favorites,   required this.currentFilters,});
+       CategoriesScreen({super.key, required this.favorites, required this.myfilter});
    final List<Meal> favorites;
-      final Map<String, bool> currentFilters;
+       Map<String, bool> myfilter;
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
@@ -30,11 +30,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           final category = categories[index];
           return GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => MealsScreen(categoryName: category.name,favorites: widget.favorites, filters: widget.currentFilters,),
-                ),
-              );
+              {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => MealsScreen(
+                      categoryName: category.name,
+                      favorites: widget.favorites,
+                      myFilter: widget.myfilter,
+                    ),
+                  ),
+                );
+              }
             },
             child: Card(
               shape: RoundedRectangleBorder(
